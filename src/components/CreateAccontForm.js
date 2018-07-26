@@ -68,8 +68,7 @@ class CreateAccontForm extends Component {
     const { email, password } = this.state
 
     return(
-      <Container text className='create_acount_form'>
-
+      <Container text>
 
         <Form onSubmit={this.onSubmit} style={{marginTop:60}}>
           <Grid>

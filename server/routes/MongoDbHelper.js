@@ -36,7 +36,7 @@ export default class MongoDbHelper {
         });
       },
 
-      update : ( find_param,  upd_param ) => { //TODO: update many
+      update : ( find_param,  upd_param ) => {
         return new Promise((resolve, reject) => {
 
           mongoDbCollection.updateOne( find_param, upd_param, (err, result) => {
@@ -46,7 +46,7 @@ export default class MongoDbHelper {
         });
       },
 
-      find : (param) => { //TODO: search
+      find : (param) => {
         return new Promise((resolve, reject) => {
           mongoDbCollection.find(param).toArray( (err, docs) => {
             if (err) { reject(err); }

@@ -48,7 +48,7 @@ class Dashboard extends Component {
           </div>
         </div>
     
-        {/* <a href="/create_recipe">link text</a> */}
+        <a href="/create_recipe_form">link text</a>
 
       </div>
     )
