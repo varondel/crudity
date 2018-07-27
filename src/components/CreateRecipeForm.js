@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux'
+import { withRouter } from 'react-router'
 import { Container, Form, Input, Button, Grid } from 'semantic-ui-react'
 
 import ArrayToList from './ArrayToList'
@@ -7,7 +9,6 @@ import * as MyAPI from '../utils/MyAPI'
 class CreateRecipeForm extends Component {
 
   state = {
-    id:'',
     recipeName:'',
     currentIngredient:'',
     ingredients:[],
@@ -23,10 +24,10 @@ class CreateRecipeForm extends Component {
    
   onSubmit = () => {
 
-    const { id, recipeName, ingredients, steps, duration, difficulty, quantity } = this.state
+    const {recipeName, ingredients, steps, duration, difficulty, quantity } = this.state
 
     const params = {
-      id,
+      userCredit : this.props.user,
       recipeName, 
       ingredients,
       steps,
@@ -169,6 +170,14 @@ onAddStep = () => {
     );
   }
 }
+
+// react-redux
+function mapStateToProps ( {user} ) {
+  return {
+    user
+  }
+}
   
-  export default CreateRecipeForm;
+  //export default CreateRecipeForm;
+  export default withRouter(connect(mapStateToProps)(CreateRecipeForm))
   

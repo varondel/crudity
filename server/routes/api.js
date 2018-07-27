@@ -3,6 +3,8 @@ import sha256 from 'sha256'
 import crypto from 'crypto'
 import bcrypt from 'bcrypt'
 
+import {ObjectID} from 'mongodb'
+
 // change this
 const db_name = 'example_db'
 
@@ -361,24 +363,45 @@ exports.login_with_token = (req, res) => {
 
 exports.create_recipe = (req, res) => {
 
-  //console.log(req)
+  console.log(req.body)
 
-  let insert_params = {
-    createdAt: new Date(),
-    id:'',
-    recipe:{
-      "name" : req.body.recipeName,
-      "ingedients" : req.body.ingredients,
-      "steps" : req.body.steps,
-      "duration" : req.body.duation,
-      "difficulty" : req.body.difficulty,
-      "quantity" : req.body.quantity
-    },
-    user : "",
+  const login_token = req.body.userCredit.login_token
+  const userId = req.body.userCredit.user._id
+
+  const hashed_token = crypto.createHash('sha256').update(login_token).digest('base64');
+  let find_param = {
+    "_id" : userId,
+    'services.resume.loginTokens':{
+      '$elemMatch':{
+        'hashedToken':hashed_token
+      }
+    }
   }
+  mongoDbHelper.collection("users").findOne(find_param)
+  .then((results) => {
 
-  return mongoDbHelper.collection("recipes").insert(insert_params)
-  .then((result) => {
-    console.log(result)
+    if ( results === null ) {
+      console.log("Fail to get user")
+      res.json({ status: 'error', detail: 'no such user' });
+      return;
+    }
+
+    let insert_params = {
+      createdAt: new Date(),
+      recipe:{
+        "name" : req.body.recipeName,
+        "ingedients" : req.body.ingredients,
+        "steps" : req.body.steps,
+        "duration" : req.body.duation,
+        "difficulty" : req.body.difficulty,
+        "quantity" : req.body.quantity
+      },
+      userId : userId
+    }
+  
+    return mongoDbHelper.collection("recipes").insert(insert_params)
+    .then((result) => {
+      //TODO manage error
+    })
   })
 }

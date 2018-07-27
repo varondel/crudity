@@ -71,7 +71,6 @@ class LoginForm extends Component {
   }
 
   handleChange = (e, { name, value }) => {
-    console.log('HanleChange !')
     this.setState({ [name]: value })
   }
 
