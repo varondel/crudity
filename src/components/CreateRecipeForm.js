@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Container, Form, Input, Button, Grid } from 'semantic-ui-react'
 
 import ArrayToList from './ArrayToList'
+import * as MyAPI from '../utils/MyAPI'
 
 class CreateRecipeForm extends Component {
 
@@ -13,8 +14,8 @@ class CreateRecipeForm extends Component {
     currentStep:'',
     steps:[],
     duration : {
-      hour:'',
-      minute:''
+      hour:'0',
+      minute:'0'
     },
     difficulty:'',
     quantity:''
@@ -22,6 +23,23 @@ class CreateRecipeForm extends Component {
    
   onSubmit = () => {
 
+    const { id, recipeName, ingredients, steps, duration, difficulty, quantity } = this.state
+
+    const params = {
+      id,
+      recipeName, 
+      ingredients,
+      steps,
+      duration,
+      difficulty,
+      quantity
+    }
+
+    // create account
+    MyAPI.createRecipe(params)
+    .then((data) => {
+      console.log(data)
+    })
   }
 
   onChangeName = (e, { name, value }) => {

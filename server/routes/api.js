@@ -357,3 +357,28 @@ exports.login_with_token = (req, res) => {
     console.log("err:", err)
   })
 }
+
+
+exports.create_recipe = (req, res) => {
+
+  //console.log(req)
+
+  let insert_params = {
+    createdAt: new Date(),
+    id:'',
+    recipe:{
+      "name" : req.body.recipeName,
+      "ingedients" : req.body.ingredients,
+      "steps" : req.body.steps,
+      "duration" : req.body.duation,
+      "difficulty" : req.body.difficulty,
+      "quantity" : req.body.quantity
+    },
+    user : "",
+  }
+
+  return mongoDbHelper.collection("recipes").insert(insert_params)
+  .then((result) => {
+    console.log(result)
+  })
+}

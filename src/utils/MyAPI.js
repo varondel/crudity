@@ -59,3 +59,14 @@ export const logout = (params) =>
     },
     body: JSON.stringify( params )
   }).then(res => res.json())
+
+// create recipe
+export const createRecipe = (params) =>
+  fetch(`${api}/create_recipe`, {
+    method: 'POST',
+    headers: {
+      ...headers,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify( params )
+  }).then(res => res.json())
