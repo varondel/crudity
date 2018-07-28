@@ -38,8 +38,14 @@ class CreateRecipeForm extends Component {
 
     // create account
     MyAPI.createRecipe(params)
-    .then((data) => {
-      console.log(data)
+    .then((res) => {
+      if (res.status === "success"){
+        // redirect
+        this.props.history.push("/dashboard")
+      }
+      else {
+        // Manage error page
+      }
     })
   }
 
