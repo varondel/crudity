@@ -360,7 +360,10 @@ exports.login_with_token = (req, res) => {
   })
 }
 
+//Add new recipe
 exports.create_recipe = (req, res) => {
+
+  console.log(req.body.userCredit)
 
   const login_token = req.body.userCredit.login_token
   const userId = req.body.userCredit.user._id
@@ -387,7 +390,7 @@ exports.create_recipe = (req, res) => {
       createdAt: new Date(),
       recipe:{
         "name" : req.body.recipeName,
-        "ingedients" : req.body.ingredients,
+        "ingredients" : req.body.ingredients,
         "steps" : req.body.steps,
         "duration" : req.body.duation,
         "difficulty" : req.body.difficulty,
@@ -401,6 +404,28 @@ exports.create_recipe = (req, res) => {
   .then((result) => {
     res.json({
       status: 'success'
+    })
+  })
+  .catch((err) => {
+    res.json({status: 'error', detail: err})
+    console.log("err:", err)
+  })
+}
+
+//Retrieve user recipes
+exports.fetch_recipes = (req, res) => {
+
+  const userId = req.body.userId
+
+  let find_param = {
+    "userId" : userId
+  }
+  
+  mongoDbHelper.collection("recipes").find(find_param)
+  .then((result) => {
+    res.json({
+      status: 'success',
+      recipes: result
     })
   })
   .catch((err) => {

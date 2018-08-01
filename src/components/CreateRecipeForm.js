@@ -6,6 +6,8 @@ import { Container, Form, Input, Button, Grid } from 'semantic-ui-react'
 import ArrayToList from './ArrayToList'
 import * as MyAPI from '../utils/MyAPI'
 
+import { setRecipesRedux } from '../actions/UserActions'
+
 class CreateRecipeForm extends Component {
 
   state = {
@@ -15,11 +17,15 @@ class CreateRecipeForm extends Component {
     currentStep:'',
     steps:[],
     duration : {
-      hour:'0',
-      minute:'0'
+      hour:'',
+      minute:''
     },
     difficulty:'',
-    quantity:''
+    quantity:'',
+    error:{
+      recipeName:'',
+      duration:''
+    }
   }
    
   onSubmit = () => {
@@ -36,12 +42,53 @@ class CreateRecipeForm extends Component {
       quantity
     }
 
+    // Check Validation
+    let isValid = true
+    let durationError = ''
+    let nameError = ''
+
+    if (this.state.recipeName === '') {
+      isValid = false
+      nameError = 'You need to name your recipe'
+    } else
+      nameError = ''
+
+    if (this.state.duration.hour === '' && this.state.duration.minute === '') {
+      isValid = false
+      durationError = 'How much time is required to prepare this recipe ?'
+    } else
+      durationError = ''
+
+    this.setState((prevState) => ({
+      error : {
+        ...prevState.error,
+        recipeName : nameError,
+        duration : durationError
+      }
+    }))
+
+    if (isValid === false)
+      return
+
     // create account
     MyAPI.createRecipe(params)
     .then((res) => {
       if (res.status === "success"){
-        // redirect
-        this.props.history.push("/dashboard")
+        
+        const { user } = this.props
+    
+        const param = {
+          userId: user.user._id
+        }
+    
+        MyAPI.fetchRecipes(param)
+        .then((result) => {
+
+          this.props.mapDispatchToSetRecipes(result)
+        })
+        .then((result) => {
+          this.props.history.push("dashboard")
+        })
       }
       else {
         // Manage error page
@@ -54,13 +101,18 @@ class CreateRecipeForm extends Component {
   }
 
   onChangeDuration = (e, { name, value }) => {
+    const re = /^[1-9\b][0-9\b]*$/;
+
+    if ((value === '' || re.test(value)) && !(name === 'minute' && value > 60)) {
+      this.setState((prevState) => ({
+        duration : {
+          ...prevState.duration,
+          [name] : value
+        }
+      }))
+    }
+
     
-    this.setState((prevState) => ({
-       duration : {
-         ...prevState.duration,
-         [name] : value
-       }
-    }))
   }
 
 // Ingredients callbacks
@@ -72,7 +124,6 @@ class CreateRecipeForm extends Component {
     this.setState((prevState) => ({
       ingredients: [...prevState.ingredients, this.state.currentIngredient]
     }))
-    console.log('add : ' + this.state.ingredients)
   }
 
 
@@ -85,7 +136,6 @@ onAddStep = () => {
   this.setState((prevState) => ({
     steps: [...prevState.steps, this.state.currentStep]
   }))
-  console.log('add : ' + this.state.ingredients)
 }
 
   render() {
@@ -93,7 +143,7 @@ onAddStep = () => {
     return (
       <Container text>
 
-        <Form onSubmit={this.onSubmit} style={{marginTop:60}}>
+        <Form className="ui form error" onSubmit={this.onSubmit} style={{marginTop:60}}>
           <Grid>
 
 {/*Recipe Name*/}
@@ -106,7 +156,13 @@ onAddStep = () => {
                 name='recipeName'
                 onChange={this.onChangeName}
                 value={this.state.name}
-                placeholder='Name your recipe' />
+                placeholder='Name your recipe' 
+              />
+              {this.state.error.recipeName !== '' &&
+              <div className="ui error message">
+                <div className="header">Invalid Name</div>
+                <p>{this.state.error.recipeName}</p>
+              </div>} 
             </Grid.Column>
 
 {/*Duration*/}
@@ -133,8 +189,12 @@ onAddStep = () => {
                 <div className="ui basic label">
                   mn
                 </div>
-
               </div>
+              {this.state.error.duration !== '' &&
+              <div className="ui error message">
+                <div className="header">Invalid Duration</div>
+                <p>{this.state.error.duration}</p>
+              </div>}
             </Grid.Column>
 
 {/*Ingredients*/}
@@ -183,7 +243,13 @@ function mapStateToProps ( {user} ) {
     user
   }
 }
+
+function mapDispatchToProps (dispatch) {
+  return {
+    mapDispatchToSetRecipes: (data) => dispatch(setRecipesRedux({ params: data}))
+  }
+}
   
   //export default CreateRecipeForm;
-  export default withRouter(connect(mapStateToProps)(CreateRecipeForm))
+  export default withRouter(connect(mapStateToProps, mapDispatchToProps)(CreateRecipeForm))
   

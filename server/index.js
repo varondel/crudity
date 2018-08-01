@@ -43,5 +43,8 @@ app.post('/logout', api.logout);
 //user
 app.post('/create_recipe', api.create_recipe);
 
+//recipes
+app.post('/fetch_recipes', api.fetch_recipes);
+
 app.listen(port);
 console.log('Listening on port '+port+'...');

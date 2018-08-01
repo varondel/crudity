@@ -70,3 +70,14 @@ export const createRecipe = (params) =>
     },
     body: JSON.stringify( params )
   }).then(res => res.json())
+
+// fetch recipes from backend
+export const fetchRecipes = (params) =>
+  fetch(`${api}/fetch_recipes`, {
+    method: 'POST',
+    headers: {
+      ...headers,
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify( params )
+  }).then(res => res.json())

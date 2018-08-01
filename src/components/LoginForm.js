@@ -13,6 +13,7 @@ import * as MyAPI from '../utils/MyAPI'
 import { LOCAL_STRAGE_KEY } from '../utils/Settings'
 
 import { loginWithEmailRedux } from '../actions/UserActions'
+import { setRecipesRedux } from '../actions/UserActions'
 
 class LoginForm extends Component {
 
@@ -56,8 +57,21 @@ class LoginForm extends Component {
       })
     })
     .then(() => {
-      // redirect
-      this.props.history.push("/dashboard")
+      
+      const { user } = this.props
+  
+      const param = {
+        userId: user.user._id
+      }
+  
+      MyAPI.fetchRecipes(param)
+      .then((result) => {
+
+        this.props.mapDispatchToSetRecipes(result)
+      })
+      .then((result) => {
+        this.props.history.push("dashboard")
+      })
     })
     .catch((err) => {
       console.log("err:", err)
@@ -135,9 +149,9 @@ function mapStateToProps ( {user} ) {
 function mapDispatchToProps (dispatch) {
   return {
     mapDispatchToLoginWithPassword: (data) => dispatch(loginWithEmailRedux({ params: data})),
+    mapDispatchToSetRecipes: (data) => dispatch(setRecipesRedux({ params: data}))
   }
 }
-
 
 // export default withRouter(MainPage);
 export default withRouter( connect( mapStateToProps, mapDispatchToProps )(LoginForm) )
