@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { withRouter } from 'react-router'
 import { connect } from 'react-redux'
-import { Container } from 'semantic-ui-react'
+import { Container, Button, Grid, Popup} from 'semantic-ui-react'
 
 import { LOCAL_STRAGE_KEY } from '../../utils/Settings'
 
@@ -55,13 +55,21 @@ class Dashboard extends Component {
           {
             recipes.length > 0 &&
             recipes.map((value, key) => 
-              <Recipe key={key} data={value}/>
+              (<Popup key={key} trigger={
+                <Recipe data={value}/>
+              } flowing hoverable>
+                <Grid centered divided columns={2}>
+                  <Grid.Column textAlign='center'>
+                    <Button>Edit</Button>
+                  </Grid.Column>
+                  <Grid.Column textAlign='center'>
+                    <Button>Delete</Button>
+                  </Grid.Column>
+                </Grid>
+              </Popup>)
             )
           }
         </div>
-    
-        
-
       </Container>
     )
   }
