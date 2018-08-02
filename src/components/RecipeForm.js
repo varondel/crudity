@@ -8,10 +8,10 @@ import * as MyAPI from '../utils/MyAPI'
 
 import { setRecipesRedux } from '../actions/UserActions'
 
-class CreateRecipeForm extends Component {
+class RecipeForm extends Component {
 
   state = {
-    recipeName:'',
+    name:'',
     currentIngredient:'',
     ingredients:[],
     currentStep:'',
@@ -23,31 +23,35 @@ class CreateRecipeForm extends Component {
     difficulty:'',
     quantity:'',
     error:{
-      recipeName:'',
+      name:'',
       duration:''
     }
   }
-   
-  onSubmit = () => {
+  componentDidMount() {
+    console.log(this.props.edit)
+    if (this.props.edit.isEditing === true) {
+      console.log("isEditing")
 
-    const {recipeName, ingredients, steps, duration, difficulty, quantity } = this.state
-
-    const params = {
-      userCredit : this.props.user,
-      recipeName, 
-      ingredients,
-      steps,
-      duration,
-      difficulty,
-      quantity
+      const recipeForm = Object.assign({}, this.props.edit.recipeInfo.recipe)
+      this.setState((prevState) => {
+        const newState = {
+          ...prevState,
+          ...recipeForm
+        }
+        console.log(newState)
+        return newState
+      }
+    )
     }
+  }
 
+  isValid = () => {
     // Check Validation
     let isValid = true
     let durationError = ''
     let nameError = ''
 
-    if (this.state.recipeName === '') {
+    if (this.state.name === '') {
       isValid = false
       nameError = 'You need to name your recipe'
     } else
@@ -62,48 +66,94 @@ class CreateRecipeForm extends Component {
     this.setState((prevState) => ({
       error : {
         ...prevState.error,
-        recipeName : nameError,
+        name : nameError,
         duration : durationError
       }
     }))
-
-    if (isValid === false)
-      return
-
-    // create account
-    MyAPI.createRecipe(params)
-    .then((res) => {
-      if (res.status === "success"){
-        
-        const { user } = this.props
     
-        const param = {
-          userId: user.user._id
-        }
-    
-        MyAPI.fetchRecipes(param)
-        .then((result) => {
-
-          this.props.mapDispatchToSetRecipes(result)
-        })
-        .then((result) => {
-          this.props.history.push("dashboard")
-        })
-      }
-      else {
-        // Manage error page
-      }
-    })
+    return isValid
   }
 
-  onChangeName = (e, { name, value }) => {
-    this.setState({recipeName : value})
+  fetchRecipe = () => {
+    const { user } = this.props
+      
+    const param = {
+      userId: user.user._id
+    }
+
+    MyAPI.fetchRecipes(param)
+    .then((result) => {
+
+      this.props.mapDispatchToSetRecipes(result)
+    })
+    .then((result) => {
+      this.props.history.push("dashboard")
+    })
+  }
+   
+  onSubmit = () => {
+
+    if (this.isValid() === false)
+      return
+
+    if (this.props.edit.isEditing) {
+      // update recipe
+      const {name, ingredients, steps, duration, difficulty, quantity } = this.state
+
+      const params = {
+        userCredit : this.props.user,
+        _id: this.props.edit.recipeInfo._id,
+        name, 
+        ingredients,
+        steps,
+        duration,
+        difficulty,
+        quantity
+      }
+
+      MyAPI.updateRecipe(params)
+      .then((res) => {
+        if (res.status === "success"){
+          this.fetchRecipe()
+        }
+        else {
+          // Manage error page
+        }
+      })
+    } else {
+       // create recipe
+       const {name, ingredients, steps, duration, difficulty, quantity } = this.state
+
+       const params = {
+         userCredit : this.props.user,
+         name, 
+         ingredients,
+         steps,
+         duration,
+         difficulty,
+         quantity
+       }
+
+      MyAPI.createRecipe(params)
+      .then((res) => {
+        if (res.status === "success"){
+          this.fetchRecipe()
+        }
+        else {
+          // Manage error page
+        }
+      })
+    }
+  }
+
+  onChangeName = (e, {value }) => {
+    this.setState({name : value})
   }
 
   onChangeDuration = (e, { name, value }) => {
     const re = /^[1-9\b][0-9\b]*$/;
 
-    if ((value === '' || re.test(value)) && !(name === 'minute' && value > 60)) {
+    if ((value === '' || re.test(value)) && !(name === 'minute' && value >= 60)) {
       this.setState((prevState) => ({
         duration : {
           ...prevState.duration,
@@ -153,15 +203,15 @@ onAddStep = () => {
                 style={{width: '100%'}}
                 icon={{className: 'utensils'}}
                 iconPosition='left'
-                name='recipeName'
+                name='name'
                 onChange={this.onChangeName}
                 value={this.state.name}
                 placeholder='Name your recipe' 
               />
-              {this.state.error.recipeName !== '' &&
+              {this.state.error.name !== '' &&
               <div className="ui error message">
                 <div className="header">Invalid Name</div>
-                <p>{this.state.error.recipeName}</p>
+                <p>{this.state.error.name}</p>
               </div>} 
             </Grid.Column>
 
@@ -173,7 +223,7 @@ onAddStep = () => {
                   style={{width: '100%'}}
                   name='hour'
                   onChange={this.onChangeDuration}
-                  value={this.state.duration.hour}
+                  value={this.state.duration ? this.state.duration.hour : ''}
                   placeholder='0' />
                 <div className="ui basic label">
                   h
@@ -184,7 +234,7 @@ onAddStep = () => {
                   style={{width: '100%'}}
                   name='minute'
                   onChange={this.onChangeDuration}
-                  value={this.state.duration.minute}
+                  value={this.state.duration ? this.state.duration.minute : ''}
                   placeholder='0' />
                 <div className="ui basic label">
                   mn
@@ -238,9 +288,10 @@ onAddStep = () => {
 }
 
 // react-redux
-function mapStateToProps ( {user} ) {
+function mapStateToProps ( {user, edit} ) {
   return {
-    user
+    user,
+    edit
   }
 }
 
@@ -251,5 +302,5 @@ function mapDispatchToProps (dispatch) {
 }
   
   //export default CreateRecipeForm;
-  export default withRouter(connect(mapStateToProps, mapDispatchToProps)(CreateRecipeForm))
+  export default withRouter(connect(mapStateToProps, mapDispatchToProps)(RecipeForm))
   

@@ -7,7 +7,7 @@ import Login from './Login'
 import Home from './Home'
 import NoMatch from './NoMatch'
 import CreateAccont from './CreateAccont'
-import CreateRecipeForm from './CreateRecipeForm'
+import RecipeForm from './RecipeForm'
 
 // alert
 import Alert from 'react-s-alert';
@@ -54,8 +54,8 @@ class App extends Component {
             <CreateAccont />
           )} />
 
-          <Route exact path='/create_recipe_form' render={() => (
-            <CreateRecipeForm />
+          <Route exact path='/recipe_form' render={() => (
+            <RecipeForm />
           )} />
 
 

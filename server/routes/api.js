@@ -363,8 +363,6 @@ exports.login_with_token = (req, res) => {
 //Add new recipe
 exports.create_recipe = (req, res) => {
 
-  console.log(req.body.userCredit)
-
   const login_token = req.body.userCredit.login_token
   const userId = req.body.userCredit.user._id
 
@@ -389,10 +387,10 @@ exports.create_recipe = (req, res) => {
     let insert_params = {
       createdAt: new Date(),
       recipe:{
-        "name" : req.body.recipeName,
+        "name" : req.body.name,
         "ingredients" : req.body.ingredients,
         "steps" : req.body.steps,
-        "duration" : req.body.duation,
+        "duration" : req.body.duration,
         "difficulty" : req.body.difficulty,
         "quantity" : req.body.quantity
       },
@@ -400,6 +398,62 @@ exports.create_recipe = (req, res) => {
     }
   
     return mongoDbHelper.collection("recipes").insert(insert_params)
+  })
+  .then((result) => {
+    res.json({
+      status: 'success'
+    })
+  })
+  .catch((err) => {
+    res.json({status: 'error', detail: err})
+    console.log("err:", err)
+  })
+}
+
+
+exports.update_recipe = (req, res) => {
+
+  console.log(req.body.userCredit)
+
+  const login_token = req.body.userCredit.login_token
+  const userId = req.body.userCredit.user._id
+
+  const hashed_token = crypto.createHash('sha256').update(login_token).digest('base64');
+  let find_param = {
+    "_id" : userId,
+    'services.resume.loginTokens':{
+      '$elemMatch':{
+        'hashedToken':hashed_token
+      }
+    }
+  }
+  mongoDbHelper.collection("users").findOne(find_param)
+  .then((results) => {
+
+    if ( results === null ) {
+      console.log("Fail to get user")
+      res.json({ status: 'error', detail: 'no such user' });
+      return;
+    }
+
+    let upd_params = {
+      lastModified: new Date(),
+      recipe:{
+        "name" : req.body.name,
+        "ingredients" : req.body.ingredients,
+        "steps" : req.body.steps,
+        "duration" : req.body.duration,
+        "difficulty" : req.body.difficulty,
+        "quantity" : req.body.quantity
+      },
+      userId : userId
+    }
+    
+    let find_param = {
+      _id: req.body._id
+    }
+
+    return mongoDbHelper.collection("recipes").update(find_param, upd_params)
   })
   .then((result) => {
     res.json({

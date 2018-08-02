@@ -9,6 +9,8 @@ import { LOCAL_STRAGE_KEY } from '../../utils/Settings'
 import * as MyAPI from '../../utils/MyAPI'
 //Recipe
 import Recipe from './Recipe'
+//Redux
+import { setEditRecipeRedux } from '../../actions/UserActions'
 
 class Dashboard extends Component {
 
@@ -26,15 +28,25 @@ class Dashboard extends Component {
       this.props.history.push("/")
     })
     .catch((err) => {
-      console.log("err: ", err)
+      //console.log("err: ", err)
       localStorage.removeItem(LOCAL_STRAGE_KEY);
       this.props.history.push("/")
     })
   }
 
+  onEditRecipe = (recipe) => {
+    const edit = {
+      isEditing : true,
+      recipe : recipe
+    }
+    this.props.mapDispatchToSetRecipes(edit)
+    this.props.history.push("recipe_form")
+  }
+
 
   newRecipeRequest = () => {
-    this.props.history.push('create_recipe_form')
+    this.props.mapDispatchToSetRecipes({})
+    this.props.history.push('recipe_form')
   }
 
   render() {
@@ -60,7 +72,7 @@ class Dashboard extends Component {
               } flowing hoverable>
                 <Grid centered divided columns={2}>
                   <Grid.Column textAlign='center'>
-                    <Button color='blue'>Edit</Button>
+                    <Button onClick={() => this.onEditRecipe(value)} color='blue'>Edit</Button>
                   </Grid.Column>
                   <Grid.Column textAlign='center'>
                     <Button color='blue'>Delete</Button>
@@ -83,5 +95,11 @@ function mapStateToProps ( {user, recipes} ) {
   }
 }
 
+function mapDispatchToProps (dispatch) {
+  return {
+    mapDispatchToSetRecipes: (data) => dispatch(setEditRecipeRedux({ params: data}))
+  }
+}
+
 // export default withRouter(MainPage);
-export default withRouter( connect( mapStateToProps )(Dashboard) )
+export default withRouter( connect( mapStateToProps, mapDispatchToProps )(Dashboard) )
