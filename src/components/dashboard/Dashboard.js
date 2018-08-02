@@ -44,10 +44,10 @@ class Dashboard extends Component {
     return(
       <Container textAlign='left'>
 
-        <div style={{marginTop:60, block:'inlineBlock'}}>
+        <div style={{marginTop:60}}>
           <a style={{cursor: 'pointer'}} onClick={() => this.newRecipeRequest()}>New recipe</a>
-          <div style={{textAlign: 'right'}}>
-            <a style={{cursor: 'pointer'}} onClick={() => this.logoutRequest()}>logout</a>
+          <div style={{float: 'right'}}>
+            <a style={{cursor: 'pointer'}} onClick={() => this.logoutRequest()}>Logout</a>
           </div>
         </div>
 
@@ -60,10 +60,10 @@ class Dashboard extends Component {
               } flowing hoverable>
                 <Grid centered divided columns={2}>
                   <Grid.Column textAlign='center'>
-                    <Button>Edit</Button>
+                    <Button color='blue'>Edit</Button>
                   </Grid.Column>
                   <Grid.Column textAlign='center'>
-                    <Button>Delete</Button>
+                    <Button color='blue'>Delete</Button>
                   </Grid.Column>
                 </Grid>
               </Popup>)
