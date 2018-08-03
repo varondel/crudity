@@ -13,14 +13,32 @@ class ArrayToList extends Component {
           this.props.array.map((value, key) => 
             <List.Item key={key}>
               {this.props.isEditing &&
-                <List.Content floated='right'>
+              <span>
+                 <List.Content floated='right'>
                   <Button 
+                  style={{marginTop:'10px'}}
                     type = 'button'
                     onClick = {() => {this.props.onDelete(key)}} 
                     icon>
-                    <Icon name='trash' />
+                      <Icon name='trash' />
                   </Button>
                 </List.Content>
+                <List.Content floated='right'>
+                  <Button.Group icon vertical size='mini'>
+                    <Button
+                      type = 'button'
+                      onClick = {() => {this.props.onSwitch(key, 'up')}}
+                      icon>
+                        <Icon name='angle up'/>
+                    </Button>
+                    <Button
+                      type = 'button'
+                      onClick = {() => {this.props.onSwitch(key, 'down')}}
+                      icon='angle down'>
+                    </Button>
+                  </Button.Group>
+                </List.Content>
+              </span>
               }
               <Icon name='right triangle' color='grey' />
               <List.Content>{value}</List.Content>

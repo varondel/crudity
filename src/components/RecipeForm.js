@@ -153,8 +153,6 @@ class RecipeForm extends Component {
         }
       }))
     }
-
-    
   }
 
 // Ingredients callbacks
@@ -184,40 +182,86 @@ class RecipeForm extends Component {
         i++
       }
     }
-
     this.setState({ingredients : newIngredients})
   }
 
-// Steps callbacks
-onStepChange = (e, { name, value }) => {
-  this.setState({currentStep: value})
-}
+  onSwitchIngredient = (key, direction) => {
+    let newIngredients = [...this.state.ingredients]
 
-onAddStep = () => {
-  if (this.state.currentStep.length === 0)
-    return
-
-  this.setState((prevState) => ({
-    steps: [...prevState.steps, this.state.currentStep]
-  }))
-}
-
-onDeleteStep = (key) => {
-  const stepsTemp = [...this.state.steps]
-  stepsTemp[key] = null
-
-  const newSteps = []
-  let i = 0
-
-  for (let j = 0; j < stepsTemp.length; j++) {
-    if (stepsTemp[j] != null ) {
-      newSteps[i] = stepsTemp[j]
-      i++
+    switch(direction) {
+      case 'up':
+        if (key === 0)
+          return
+        newIngredients = this.switchIndex([...this.state.ingredients], key, key-1)
+        break
+      case 'down':
+        if (key === this.state.ingredients.length - 1)
+          return
+        newIngredients = this.switchIndex([...this.state.ingredients], key, key+1)
+        break
+      default:
+        return
     }
+    this.setState({ingredients: newIngredients})
   }
 
-  this.setState({steps : newSteps})
-}
+// Steps callbacks
+  onStepChange = (e, { name, value }) => {
+    this.setState({currentStep: value})
+  }
+
+  onAddStep = () => {
+    if (this.state.currentStep.length === 0)
+      return
+
+    this.setState((prevState) => ({
+      steps: [...prevState.steps, this.state.currentStep]
+    }))
+  }
+
+  onDeleteStep = (key) => {
+    const stepsTemp = [...this.state.steps]
+    stepsTemp[key] = null
+
+    const newSteps = []
+    let i = 0
+
+    for (let j = 0; j < stepsTemp.length; j++) {
+      if (stepsTemp[j] != null ) {
+        newSteps[i] = stepsTemp[j]
+        i++
+      }
+    }
+    this.setState({steps : newSteps})
+  }
+
+  switchIndex = (array, index_1, index_2) => {
+    const temp = array[index_1]
+    array[index_1] = array[index_2]
+    array[index_2] = temp
+
+    return array
+  }
+
+  onSwitchStep = (key, direction) => {
+    let newSteps = [...this.state.steps]
+
+    switch(direction) {
+      case 'up':
+        if (key === 0)
+          return
+        newSteps = this.switchIndex([...this.state.steps], key, key-1)
+        break
+      case 'down':
+        if (key === this.state.steps.length - 1)
+          return
+        newSteps = this.switchIndex([...this.state.steps], key, key+1)
+        break
+      default:
+        return
+    }
+    this.setState({steps: newSteps})
+  }
 
   render() {
     
@@ -283,6 +327,7 @@ onDeleteStep = (key) => {
               <h3>Ingredients : </h3>
               <ArrayToList
                 onDelete = {(key) => {this.onDeleteIngredient(key)}}
+                onSwitch = {(key, direction) => {this.onSwitchIngredient(key, direction)}}
                 array={this.state.ingredients}
                 isEditing={this.props.edit.isEditing}/>
               <Input
@@ -297,6 +342,7 @@ onDeleteStep = (key) => {
               <h3>Steps : </h3>
               <ArrayToList 
                 onDelete = {(key) => {this.onDeleteStep(key)}}
+                onSwitch = {(key, direction) => {this.onSwitchStep(key, direction)}}
                 array={this.state.steps}
                 isEditing={this.props.edit.isEditing}
               />
