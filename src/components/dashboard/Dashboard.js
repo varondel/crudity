@@ -14,6 +14,10 @@ import { setEditRecipeRedux } from '../../actions/UserActions'
 
 class Dashboard extends Component {
 
+  componentDidMount(){
+    this.props.mapDispatchToEditRecipes({isEditing : false, recipeInfo : {}})
+  }
+
   logoutRequest = () => {
 
     const { user } = this.props
@@ -37,15 +41,15 @@ class Dashboard extends Component {
   onEditRecipe = (recipe) => {
     const edit = {
       isEditing : true,
-      recipe : recipe
+      recipeInfo : recipe
     }
-    this.props.mapDispatchToSetRecipes(edit)
+    this.props.mapDispatchToEditRecipes(edit)
     this.props.history.push("recipe_form")
   }
 
 
   newRecipeRequest = () => {
-    this.props.mapDispatchToSetRecipes({})
+    this.props.mapDispatchToEditRecipes({isEditing : false, recipeInfo : {}})
     this.props.history.push('recipe_form')
   }
 
@@ -97,7 +101,7 @@ function mapStateToProps ( {user, recipes} ) {
 
 function mapDispatchToProps (dispatch) {
   return {
-    mapDispatchToSetRecipes: (data) => dispatch(setEditRecipeRedux({ params: data}))
+    mapDispatchToEditRecipes: (data) => dispatch(setEditRecipeRedux({ params: data}))
   }
 }
 

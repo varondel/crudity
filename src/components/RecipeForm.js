@@ -27,21 +27,14 @@ class RecipeForm extends Component {
       duration:''
     }
   }
-  componentDidMount() {
-    console.log(this.props.edit)
-    if (this.props.edit.isEditing === true) {
-      console.log("isEditing")
-
+  constructor(props) {
+    super(props)
+    if (props.edit.isEditing === true) {
       const recipeForm = Object.assign({}, this.props.edit.recipeInfo.recipe)
-      this.setState((prevState) => {
-        const newState = {
-          ...prevState,
+      this.state = {
+          ...this.state,
           ...recipeForm
         }
-        console.log(newState)
-        return newState
-      }
-    )
     }
   }
 
@@ -57,7 +50,7 @@ class RecipeForm extends Component {
     } else
       nameError = ''
 
-    if (this.state.duration.hour === '' && this.state.duration.minute === '') {
+    if (!this.state.duration || ( this.state.duration.hour === '' && this.state.duration.minute === '')) {
       isValid = false
       durationError = 'How much time is required to prepare this recipe ?'
     } else
@@ -92,7 +85,6 @@ class RecipeForm extends Component {
   }
    
   onSubmit = () => {
-
     if (this.isValid() === false)
       return
 
@@ -171,11 +163,30 @@ class RecipeForm extends Component {
   }
 
   onAddIngredient = () => {
+    if (this.state.currentIngredient.length === 0)
+      return
+
     this.setState((prevState) => ({
       ingredients: [...prevState.ingredients, this.state.currentIngredient]
     }))
   }
 
+  onDeleteIngredient = (key) => {
+    const ingredientsTemp = [...this.state.ingredients]
+    ingredientsTemp[key] = null
+  
+    const newIngredients = []
+    let i = 0
+  
+    for (let j = 0; j < ingredientsTemp.length; j++) {
+      if (ingredientsTemp[j] != null ) {
+        newIngredients[i] = ingredientsTemp[j]
+        i++
+      }
+    }
+
+    this.setState({ingredients : newIngredients})
+  }
 
 // Steps callbacks
 onStepChange = (e, { name, value }) => {
@@ -183,9 +194,29 @@ onStepChange = (e, { name, value }) => {
 }
 
 onAddStep = () => {
+  if (this.state.currentStep.length === 0)
+    return
+
   this.setState((prevState) => ({
     steps: [...prevState.steps, this.state.currentStep]
   }))
+}
+
+onDeleteStep = (key) => {
+  const stepsTemp = [...this.state.steps]
+  stepsTemp[key] = null
+
+  const newSteps = []
+  let i = 0
+
+  for (let j = 0; j < stepsTemp.length; j++) {
+    if (stepsTemp[j] != null ) {
+      newSteps[i] = stepsTemp[j]
+      i++
+    }
+  }
+
+  this.setState({steps : newSteps})
 }
 
   render() {
@@ -198,7 +229,7 @@ onAddStep = () => {
 
 {/*Recipe Name*/}
             <Grid.Column textAlign='left' width={16}>
-              <p>Recipe name :</p>
+              <h3>Recipe name :</h3>
               <Input
                 style={{width: '100%'}}
                 icon={{className: 'utensils'}}
@@ -217,7 +248,7 @@ onAddStep = () => {
 
 {/*Duration*/}
             <Grid.Column textAlign='left' width={16}>
-              <p>Duration : </p>
+              <h3>Duration : </h3>
               <div className="ui right labeled input" style={{width: "15%"}}>
                 <Input
                   style={{width: '100%'}}
@@ -249,8 +280,11 @@ onAddStep = () => {
 
 {/*Ingredients*/}
             <Grid.Column textAlign='left' width={16}>
-              <p>Ingredients : </p>
-              <ArrayToList array={this.state.ingredients}/>
+              <h3>Ingredients : </h3>
+              <ArrayToList
+                onDelete = {(key) => {this.onDeleteIngredient(key)}}
+                array={this.state.ingredients}
+                isEditing={this.props.edit.isEditing}/>
               <Input
                 style={{width: '100%'}}
                 icon={{className: 'plus link icon', onClick: this.onAddIngredient}}
@@ -260,8 +294,12 @@ onAddStep = () => {
 
 {/*Steps*/}
             <Grid.Column textAlign='left' width={16}>
-              <p>Steps : </p>
-              <ArrayToList array={this.state.steps}/>
+              <h3>Steps : </h3>
+              <ArrayToList 
+                onDelete = {(key) => {this.onDeleteStep(key)}}
+                array={this.state.steps}
+                isEditing={this.props.edit.isEditing}
+              />
               <Input
                 style={{width: '100%'}}
                 icon={{className: 'plus link icon', onClick: this.onAddStep}}

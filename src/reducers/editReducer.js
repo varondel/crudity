@@ -11,7 +11,7 @@ function edit(state = {isEditing : false}, action) {
       return {
         ...state,
         isEditing : action.params.isEditing, 
-        recipeInfo: action.params.recipe
+        recipeInfo: action.params.recipeInfo
       }
 
     default :

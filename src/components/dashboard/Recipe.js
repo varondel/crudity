@@ -10,10 +10,10 @@ class Recipe extends Component {
   render() {
     return(
       <Segment {...this.props} raised>
-        <h2>{this.props.data.recipe.name}</h2>
-        <p>Ingredients : </p>
+        <h1>{this.props.data.recipe.name}</h1>
+        <h3>Ingredients : </h3>
         <ArrayToList array={this.props.data.recipe.ingredients}/>
-        <p>Steps : </p>
+        <h3>Steps : </h3>
         <ArrayToList array={this.props.data.recipe.steps}/>
       </Segment>
     )

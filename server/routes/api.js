@@ -413,8 +413,6 @@ exports.create_recipe = (req, res) => {
 
 exports.update_recipe = (req, res) => {
 
-  console.log(req.body.userCredit)
-
   const login_token = req.body.userCredit.login_token
   const userId = req.body.userCredit.user._id
 
