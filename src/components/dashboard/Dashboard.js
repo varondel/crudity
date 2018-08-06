@@ -31,8 +31,9 @@ class Dashboard extends Component {
 
   onEditRecipe = (recipe) => {
     const edit = {
-      isEditing : true,
-      recipeInfo : recipe
+      isUdating: true,
+      isEditing: true,
+      recipeInfo: recipe
     }
     this.props.mapDispatchToEditRecipes(edit)
     this.props.history.push("recipe_form")
@@ -60,8 +61,8 @@ class Dashboard extends Component {
   }
 
 
-  newRecipeRequest = () => {
-    this.props.mapDispatchToEditRecipes({isEditing : false, recipeInfo : {}})
+  onCreateRecipe = () => {
+    this.props.mapDispatchToEditRecipes({isEditing: true, isUpdating: false, recipeInfo : {}})
     this.props.history.push('recipe_form')
   }
 
@@ -73,7 +74,7 @@ class Dashboard extends Component {
       <Container textAlign='left'>
 
         <div style={{marginTop:60}}>
-          <a style={{cursor: 'pointer'}} onClick={() => this.newRecipeRequest()}>New recipe</a>
+          <a style={{cursor: 'pointer'}} onClick={() => this.onCreateRecipe()}>New recipe</a>
           <div style={{float: 'right'}}>
             <a style={{cursor: 'pointer'}} onClick={() => this.onLogout()}>Logout</a>
           </div>

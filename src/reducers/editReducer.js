@@ -3,7 +3,7 @@ import {
   LOGOUT
 } from '../actions/UserActions'
 
-function edit(state = {isEditing : false}, action) {
+function edit(state = {isEditing: false, isUpdating: false}, action) {
 
   switch (action.type) {
 
@@ -11,7 +11,8 @@ function edit(state = {isEditing : false}, action) {
 
       return {
         ...state,
-        isEditing : action.params.isEditing, 
+        isEditing : action.params.isEditing,
+        isUpdating : action.params.isUpdating,
         recipeInfo: action.params.recipeInfo
       }
       

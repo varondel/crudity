@@ -85,7 +85,7 @@ class RecipeForm extends Component {
     }
     let action = ''
 
-    if (this.props.edit.isEditing) {
+    if (this.props.edit.isUpdating) {
 // update recipe
       params = {...params, _id: this.props.edit.recipeInfo._id}
       action = 'update_recipe'
