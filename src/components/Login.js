@@ -14,15 +14,12 @@ class Login extends Component {
 
     return(
       <Container className='home' style={{textAlign: 'center'}}>
-
         <Grid style={{marginTop:60}}>
           <Grid.Column textAlign='right' width={16}>
             <Link to="/create_acount">Create an account</Link>
           </Grid.Column>
         </Grid>
-
         <LoginForm />
-
       </Container>
     )
   }

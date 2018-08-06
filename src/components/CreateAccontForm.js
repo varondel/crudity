@@ -29,7 +29,7 @@ class CreateAccontForm extends Component {
     }
 
     // create account
-    MyAPI.createAccount(params)
+    MyAPI.fetchApi(params, 'create_user')
     .then((data) => {
       // save account
 

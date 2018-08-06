@@ -31,7 +31,7 @@ class LoginForm extends Component {
     }
 
     // create account
-    MyAPI.signinWithPassword(params)
+    MyAPI.fetchApi(params, 'login_with_email_password')
     .then((data) => {
 
       return new Promise((resolve, reject) => {
@@ -58,19 +58,7 @@ class LoginForm extends Component {
       })
     })
     .then(() => {
-      
-      const { user } = this.props
-  
-      const param = {
-        userId: user.user._id
-      }
-  
-      MyAPI.fetchRecipes(param)
-      .then((result) => {
-
-        console.log(result)
-        this.props.mapDispatchToSetRecipes(result.recipes)
-      })
+      MyAPI.fetchRecipes()
       .then((result) => {
         this.props.history.push("dashboard")
       })
@@ -99,7 +87,6 @@ class LoginForm extends Component {
 
         <Form onSubmit={this.onSubmit} style={{marginTop:60}}>
           <Grid>
-
             <Grid.Column textAlign='left' width={16}>
               <label>Email</label>
               <Input
@@ -131,11 +118,8 @@ class LoginForm extends Component {
                 disabled={this.state.loading}
                 type='submit'>Sign in</Button>
             </Grid.Column>
-
           </Grid>
-
         </Form>
-
       </Container>
     )
   }

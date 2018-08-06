@@ -1,3 +1,6 @@
+import store from './../store'
+import { setRecipesRedux } from './../actions/UserActions'
+
 // you can change the port number at server/index.js
 const api = "http://localhost:4002"
 
@@ -8,9 +11,8 @@ const headers = {
   'Authorization': API_KEY
 }
 
-// create an account
-export const createAccount = (params) =>
-  fetch(`${api}/create_user`, {
+export const fetchApi = (params, requestName) => 
+  fetch(`${api}/${requestName}`, {
     method: 'POST',
     headers: {
       ...headers,
@@ -19,87 +21,17 @@ export const createAccount = (params) =>
     body: JSON.stringify( params )
   }).then(res => res.json())
 
-// signin
-export const signinWithPassword = (params) =>
-  fetch(`${api}/login_with_email_password`, {
-    method: 'POST',
-    headers: {
-      ...headers,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify( params )
-  }).then(res => res.json())
+export const fetchRecipes = () => 
+  new Promise((resolve, reject) => {
+    const { user } = store.getState()
+      
+    const param = {
+      userId: user.user._id
+    }
 
-
-// upload
-export const upload = (data) =>
-  fetch(`${api}/files`, {
-    method: 'POST',
-    body: data
-  }).then(res => res.json())
-
-// signin with token
-export const signinWithToken = (params) =>
-  fetch(`${api}/login_with_token`, {
-    method: 'POST',
-    headers: {
-      ...headers,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify( params )
-  }).then(res => res.json())
-
-// logout
-export const logout = (params) =>
-  fetch(`${api}/logout`, {
-    method: 'POST',
-    headers: {
-      ...headers,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify( params )
-  }).then(res => res.json())
-
-// create recipe
-export const createRecipe = (params) =>
-  fetch(`${api}/create_recipe`, {
-    method: 'POST',
-    headers: {
-      ...headers,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify( params )
-  }).then(res => res.json())
-
-// update recipe
-export const updateRecipe = (params) =>
-  fetch(`${api}/update_recipe`, {
-    method: 'POST',
-    headers: {
-      ...headers,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify( params )
-  }).then(res => res.json())
-
-  // delete recipe
-export const deleteRecipe = (params) =>
-fetch(`${api}/delete_recipe`, {
-  method: 'POST',
-  headers: {
-    ...headers,
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify( params )
-}).then(res => res.json())
-
-// fetch recipes from backend
-export const fetchRecipes = (params) =>
-  fetch(`${api}/fetch_recipes`, {
-    method: 'POST',
-    headers: {
-      ...headers,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify( params )
-  }).then(res => res.json())
+    fetchApi(param, 'fetch_recipes')
+    .then((result) => {
+      store.dispatch(setRecipesRedux({ params: result.recipes}))
+      resolve()
+    })
+  })

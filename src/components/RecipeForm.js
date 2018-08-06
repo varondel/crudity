@@ -67,76 +67,45 @@ class RecipeForm extends Component {
     
     return isValid
   }
-
-  fetchRecipe = () => {
-    const { user } = this.props
-      
-    const param = {
-      userId: user.user._id
-    }
-
-    MyAPI.fetchRecipes(param)
-    .then((result) => {
-
-      this.props.mapDispatchToSetRecipes(result.recipes)
-    })
-    .then((result) => {
-      this.props.history.push("dashboard")
-    })
-  }
    
   onSubmit = () => {
     if (this.isValid() === false)
       return
 
-    if (this.props.edit.isEditing) {
-      // update recipe
-      const {name, ingredients, steps, duration, difficulty, quantity } = this.state
-
-      const params = {
-        userCredit : this.props.user,
-        _id: this.props.edit.recipeInfo._id,
-        name, 
-        ingredients,
-        steps,
-        duration,
-        difficulty,
-        quantity
-      }
-
-      MyAPI.updateRecipe(params)
-      .then((res) => {
-        if (res.status === "success"){
-          this.fetchRecipe()
-        }
-        else {
-          // Manage error page
-        }
-      })
-    } else {
-       // create recipe
-       const {name, ingredients, steps, duration, difficulty, quantity } = this.state
-
-       const params = {
-         userCredit : this.props.user,
-         name, 
-         ingredients,
-         steps,
-         duration,
-         difficulty,
-         quantity
-       }
-
-      MyAPI.createRecipe(params)
-      .then((res) => {
-        if (res.status === "success"){
-          this.fetchRecipe()
-        }
-        else {
-          // Manage error page
-        }
-      })
+    const {name, ingredients, steps, duration, difficulty, quantity } = this.state
+    let params = {
+      userCredit : this.props.user,
+      _id: this.props.edit.recipeInfo._id,
+      name, 
+      ingredients,
+      steps,
+      duration,
+      difficulty,
+      quantity
     }
+    let action = ''
+
+    if (this.props.edit.isEditing) {
+// update recipe
+      params = {...params, _id: this.props.edit.recipeInfo._id}
+      action = 'update_recipe'
+    } else {
+// create recipe
+      action = 'create_recipe'
+    }
+
+    MyAPI.fetchApi(params, action)
+      .then((res) => {
+        if (res.status === "success"){
+          MyAPI.fetchRecipes()
+          .then((result) => {
+            this.props.history.push("dashboard")
+          })
+        }
+        else {
+          // Manage error page
+        }
+      })
   }
 
 // Name callback
@@ -158,86 +127,35 @@ class RecipeForm extends Component {
     }
   }
 
-// Ingredients callbacks
-  onIngredientChange = (e, { name, value }) => {
-    this.setState({currentIngredient: value})
+// Ingredients and steps callback
+  onInputChange = (e, { name, value }) => {
+    this.setState({[name]: value})
   }
 
-  onAddIngredient = () => {
-    if (this.state.currentIngredient.length === 0)
+  onAdd = (propertyState, propertyInput) => {
+    if (this.state[propertyInput].length === 0)
       return
 
     this.setState((prevState) => ({
-      ingredients: [...prevState.ingredients, this.state.currentIngredient],
-      currentIngredient: ''
+      [propertyState]: [...prevState[propertyState], this.state[propertyInput]],
+      [propertyInput]: ''
     }))
   }
 
-  onDeleteIngredient = (key) => {
-    const ingredientsTemp = [...this.state.ingredients]
-    ingredientsTemp[key] = null
+  onDelete = (key, stateName) => {
+    const tempArray = [...this.state[stateName]]
+    tempArray[key] = null
   
-    const newIngredients = []
+    const newArray = []
     let i = 0
   
-    for (let j = 0; j < ingredientsTemp.length; j++) {
-      if (ingredientsTemp[j] != null ) {
-        newIngredients[i] = ingredientsTemp[j]
+    for (let j = 0; j < tempArray.length; j++) {
+      if (tempArray[j] != null ) {
+        newArray[i] = tempArray[j]
         i++
       }
     }
-    this.setState({ingredients : newIngredients})
-  }
-
-  onSwitchIngredient = (key, direction) => {
-    let newIngredients = [...this.state.ingredients]
-
-    switch(direction) {
-      case 'up':
-        if (key === 0)
-          return
-        newIngredients = this.switchIndex([...this.state.ingredients], key, key-1)
-        break
-      case 'down':
-        if (key === this.state.ingredients.length - 1)
-          return
-        newIngredients = this.switchIndex([...this.state.ingredients], key, key+1)
-        break
-      default:
-        return
-    }
-    this.setState({ingredients: newIngredients})
-  }
-
-// Steps callbacks
-  onStepChange = (e, { name, value }) => {
-    this.setState({currentStep: value})
-  }
-
-  onAddStep = () => {
-    if (this.state.currentStep.length === 0)
-      return
-
-    this.setState((prevState) => ({
-      steps: [...prevState.steps, this.state.currentStep],
-      currentStep: ''
-    }))
-  }
-
-  onDeleteStep = (key) => {
-    const stepsTemp = [...this.state.steps]
-    stepsTemp[key] = null
-
-    const newSteps = []
-    let i = 0
-
-    for (let j = 0; j < stepsTemp.length; j++) {
-      if (stepsTemp[j] != null ) {
-        newSteps[i] = stepsTemp[j]
-        i++
-      }
-    }
-    this.setState({steps : newSteps})
+    this.setState({[stateName] : newArray})
   }
 
   switchIndex = (array, index_1, index_2) => {
@@ -248,24 +166,24 @@ class RecipeForm extends Component {
     return array
   }
 
-  onSwitchStep = (key, direction) => {
-    let newSteps = [...this.state.steps]
+  onSwitch = (key, direction, stateProperty) => {
+    let newArray = [...this.state[stateProperty]]
 
     switch(direction) {
       case 'up':
         if (key === 0)
           return
-        newSteps = this.switchIndex([...this.state.steps], key, key-1)
+          newArray = this.switchIndex([...this.state[stateProperty]], key, key-1)
         break
       case 'down':
-        if (key === this.state.steps.length - 1)
+        if (key === this.state[stateProperty].length - 1)
           return
-        newSteps = this.switchIndex([...this.state.steps], key, key+1)
+          newArray = this.switchIndex([...this.state[stateProperty]], key, key+1)
         break
       default:
         return
     }
-    this.setState({steps: newSteps})
+    this.setState({[stateProperty]: newArray})
   }
 
   render() {
@@ -331,33 +249,35 @@ class RecipeForm extends Component {
             <Grid.Column textAlign='left' width={16}>
               <h3>Ingredients : </h3>
               <ArrayToList
-                onDelete = {(key) => {this.onDeleteIngredient(key)}}
-                onSwitch = {(key, direction) => {this.onSwitchIngredient(key, direction)}}
+                onDelete = {(key) => {this.onDelete(key, 'ingredients')}}
+                onSwitch = {(key, direction) => {this.onSwitch(key, direction, 'ingredients')}}
                 array={this.state.ingredients}
                 isEditing={this.props.edit.isEditing}/>
               <Input
                 style={{width: '100%'}}
-                icon={{className: 'plus link icon', onClick: this.onAddIngredient}}
+                icon={{className: 'plus link icon', onClick: () => {this.onAdd('ingredients', 'currentIngredient')}}}
                 iconPosition='left'
                 value={this.state.currentIngredient}
-                onChange={this.onIngredientChange}/>
+                name='currentIngredient'
+                onChange={this.onInputChange}/>
             </Grid.Column>
 
 {/*Steps*/}
             <Grid.Column textAlign='left' width={16}>
               <h3>Steps : </h3>
               <ArrayToList 
-                onDelete = {(key) => {this.onDeleteStep(key)}}
-                onSwitch = {(key, direction) => {this.onSwitchStep(key, direction)}}
+                onDelete = {(key) => {this.onDelete(key, 'steps')}}
+                onSwitch = {(key, direction) => {this.onSwitch(key, direction, 'steps')}}
                 array={this.state.steps}
                 isEditing={this.props.edit.isEditing}
               />
               <Input
                 style={{width: '100%'}}
-                icon={{className: 'plus link icon', onClick: this.onAddStep}}
+                icon={{className: 'plus link icon', onClick: () => {this.onAdd('steps', 'currentStep')}}}
                 iconPosition='left'
                 value={this.state.currentStep}
-                onChange={this.onStepChange}/>
+                name='currentStep'
+                onChange={this.onInputChange}/>
             </Grid.Column>
 
 {/*Submit*/}

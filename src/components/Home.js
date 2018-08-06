@@ -32,7 +32,7 @@ signinWithTokenRequest = (login_token) => {
     login_token: login_token
   }
 
-  MyAPI.signinWithToken(param)
+  MyAPI.fetchApi(param, 'login_with_token')
   .then((data) => {
 
     return new Promise((resolve, reject) => {
@@ -52,17 +52,7 @@ signinWithTokenRequest = (login_token) => {
     })
   })
   .then(() => {
-
-      const { user } = this.props
-  
-      const param = {
-        userId: user.user._id
-      }
-  
-      MyAPI.fetchRecipes(param)
-      .then((result) => {
-        this.props.mapDispatchToSetRecipes(result.recipes)
-      })
+    MyAPI.fetchRecipes()
       .then((result) => {
         this.props.history.push("dashboard")
       })

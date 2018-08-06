@@ -27,7 +27,7 @@ class Dashboard extends Component {
       login_token: user.login_token
     }
 
-    MyAPI.logout(param)
+    MyAPI.fetchApi(param, 'logout')
     .then((results) => {
       localStorage.removeItem(LOCAL_STRAGE_KEY);
       this.props.history.push("/")
@@ -48,32 +48,17 @@ class Dashboard extends Component {
     this.props.history.push("recipe_form")
   }
 
-  fetchRecipe = () => {
-    const { user } = this.props
-      
-    const param = {
-      userId: user.user._id
-    }
-
-    MyAPI.fetchRecipes(param)
-    .then((result) => {
-
-      this.props.mapDispatchToSetRecipes(result.recipes)
-    })
-  }
-
   onDeleteRecipe = (key) => {
 
     const params = {
       userCredit : this.props.user,
       _id: this.props.recipesState[key]._id,
     }
-    console.log(params)
 
-    MyAPI.deleteRecipe(params)
+    MyAPI.fetchApi(params, 'delete_recipe')
     .then((res) => {
       if (res.status === "success"){
-        this.fetchRecipe()
+        MyAPI.fetchRecipes()
       }
       else {
         // Manage error page
@@ -83,9 +68,6 @@ class Dashboard extends Component {
       console.log("err:", err)
       localStorage.removeItem(LOCAL_STRAGE_KEY);
     })
-
-    // TODO : remove from db and fetch
-    //this.props.mapDispatchToSetRecipes(newRecipes)
   }
 
 
