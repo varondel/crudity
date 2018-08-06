@@ -82,6 +82,17 @@ export const updateRecipe = (params) =>
     body: JSON.stringify( params )
   }).then(res => res.json())
 
+  // delete recipe
+export const deleteRecipe = (params) =>
+fetch(`${api}/delete_recipe`, {
+  method: 'POST',
+  headers: {
+    ...headers,
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify( params )
+}).then(res => res.json())
+
 // fetch recipes from backend
 export const fetchRecipes = (params) =>
   fetch(`${api}/fetch_recipes`, {

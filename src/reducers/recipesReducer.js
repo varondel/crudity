@@ -2,18 +2,17 @@ import {
   SET_RECIPES,
 } from '../actions/UserActions'
 
-function recipes (state = {recipes : []}, action) {
+function recipes (state = [], action) {
 
   switch (action.type) {
 
     case SET_RECIPES :
     
-      const { recipes } = action.params
+      const recipes = action.params
 
-      return {
-        ...state,
-        recipes
-      }
+      return [
+        ...recipes
+      ]
 
     default :
       return state

@@ -61,8 +61,7 @@ signinWithTokenRequest = (login_token) => {
   
       MyAPI.fetchRecipes(param)
       .then((result) => {
-
-        this.props.mapDispatchToSetRecipes(result)
+        this.props.mapDispatchToSetRecipes(result.recipes)
       })
       .then((result) => {
         this.props.history.push("dashboard")

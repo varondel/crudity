@@ -52,6 +52,7 @@ class LoginForm extends Component {
 
           localStorage.setItem(LOCAL_STRAGE_KEY, JSON.stringify(params))
           this.props.mapDispatchToLoginWithPassword(params)
+
           resolve()
         }
       })
@@ -67,7 +68,8 @@ class LoginForm extends Component {
       MyAPI.fetchRecipes(param)
       .then((result) => {
 
-        this.props.mapDispatchToSetRecipes(result)
+        console.log(result)
+        this.props.mapDispatchToSetRecipes(result.recipes)
       })
       .then((result) => {
         this.props.history.push("dashboard")

@@ -11,6 +11,7 @@ import * as MyAPI from '../../utils/MyAPI'
 import Recipe from './Recipe'
 //Redux
 import { setEditRecipeRedux } from '../../actions/UserActions'
+import { setRecipesRedux } from '../../actions/UserActions'
 
 class Dashboard extends Component {
 
@@ -47,6 +48,46 @@ class Dashboard extends Component {
     this.props.history.push("recipe_form")
   }
 
+  fetchRecipe = () => {
+    const { user } = this.props
+      
+    const param = {
+      userId: user.user._id
+    }
+
+    MyAPI.fetchRecipes(param)
+    .then((result) => {
+
+      this.props.mapDispatchToSetRecipes(result.recipes)
+    })
+  }
+
+  onDeleteRecipe = (key) => {
+
+    const params = {
+      userCredit : this.props.user,
+      _id: this.props.recipesState[key]._id,
+    }
+    console.log(params)
+
+    MyAPI.deleteRecipe(params)
+    .then((res) => {
+      if (res.status === "success"){
+        this.fetchRecipe()
+      }
+      else {
+        // Manage error page
+      }
+    })
+    .catch((err) => {
+      console.log("err:", err)
+      localStorage.removeItem(LOCAL_STRAGE_KEY);
+    })
+
+    // TODO : remove from db and fetch
+    //this.props.mapDispatchToSetRecipes(newRecipes)
+  }
+
 
   newRecipeRequest = () => {
     this.props.mapDispatchToEditRecipes({isEditing : false, recipeInfo : {}})
@@ -55,7 +96,7 @@ class Dashboard extends Component {
 
   render() {
 
-    const recipes = this.props.recipesState.recipes
+    const recipes = this.props.recipesState
     
     return(
       <Container textAlign='left'>
@@ -72,14 +113,14 @@ class Dashboard extends Component {
             recipes.length > 0 &&
             recipes.map((value, key) => 
               (<Popup key={key} trigger={
-                <Recipe data={value}/>
+                <Recipe key={key} data={value}/>
               } flowing hoverable>
                 <Grid centered divided columns={2}>
                   <Grid.Column textAlign='center'>
                     <Button onClick={() => this.onEditRecipe(value)} color='blue'>Edit</Button>
                   </Grid.Column>
                   <Grid.Column textAlign='center'>
-                    <Button color='blue'>Delete</Button>
+                    <Button onClick={() => this.onDeleteRecipe(key)} color='blue'>Delete</Button>
                   </Grid.Column>
                 </Grid>
               </Popup>)
@@ -101,7 +142,8 @@ function mapStateToProps ( {user, recipes} ) {
 
 function mapDispatchToProps (dispatch) {
   return {
-    mapDispatchToEditRecipes: (data) => dispatch(setEditRecipeRedux({ params: data}))
+    mapDispatchToEditRecipes: (data) => dispatch(setEditRecipeRedux({ params: data})),
+    mapDispatchToSetRecipes: (data) => dispatch(setRecipesRedux({ params: data}))
   }
 }
 

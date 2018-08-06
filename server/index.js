@@ -43,6 +43,7 @@ app.post('/logout', api.logout);
 //recipes
 app.post('/create_recipe', api.create_recipe);
 app.post('/update_recipe', api.update_recipe);
+app.post('/delete_recipe', api.delete_recipe);
 app.post('/fetch_recipes', api.fetch_recipes);
 
 app.listen(port);

@@ -27,6 +27,7 @@ class RecipeForm extends Component {
       duration:''
     }
   }
+  
   constructor(props) {
     super(props)
     if (props.edit.isEditing === true) {
@@ -77,7 +78,7 @@ class RecipeForm extends Component {
     MyAPI.fetchRecipes(param)
     .then((result) => {
 
-      this.props.mapDispatchToSetRecipes(result)
+      this.props.mapDispatchToSetRecipes(result.recipes)
     })
     .then((result) => {
       this.props.history.push("dashboard")

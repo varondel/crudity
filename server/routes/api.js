@@ -464,6 +464,42 @@ exports.update_recipe = (req, res) => {
   })
 }
 
+//exports.update_recipe = (req, res) => {
+exports.delete_recipe = (req, res) => {
+  const login_token = req.body.userCredit.login_token
+  const userId = req.body.userCredit.user._id
+
+  const hashed_token = crypto.createHash('sha256').update(login_token).digest('base64');
+  let find_param = {
+    "_id" : userId,
+    'services.resume.loginTokens':{
+      '$elemMatch':{
+        'hashedToken':hashed_token
+      }
+    }
+  }
+  mongoDbHelper.collection("users").findOne(find_param)
+  .then((results) => {
+
+    if ( results === null ) {
+      console.log("Fail to get user")
+      res.json({ status: 'error', detail: 'no such user' });
+      return;
+    }
+
+    return mongoDbHelper.collection("recipes").delete(req.body._id)
+  })
+  .then((result) => {
+    res.json({
+      status: 'success'
+    })
+  })
+  .catch((err) => {
+    res.json({status: 'error', detail: err})
+    console.log("err:", err)
+  })
+}
+
 //Retrieve user recipes
 exports.fetch_recipes = (req, res) => {
 
