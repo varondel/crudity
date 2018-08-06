@@ -7,7 +7,6 @@ import { Container, Form, Input, Button, Grid } from 'semantic-ui-react'
 
 // API
 import * as MyAPI from '../utils/MyAPI'
-import { LOCAL_STRAGE_KEY } from '../utils/Settings'
 
 import Alert from 'react-s-alert';
 import { loginWithEmailRedux } from '../actions/UserActions'
@@ -38,8 +37,6 @@ class CreateAccontForm extends Component {
         user: data.user,
         login_token: data.login_token,
       }
-
-      localStorage.setItem(LOCAL_STRAGE_KEY, JSON.stringify(params))
 
       this.props.mapDispatchToLoginWithPassword(params)
 

@@ -3,8 +3,6 @@ import { withRouter } from 'react-router'
 import { connect } from 'react-redux'
 import { Container, Button, Grid, Popup} from 'semantic-ui-react'
 
-import { LOCAL_STRAGE_KEY } from '../../utils/Settings'
-
 // API
 import * as MyAPI from '../../utils/MyAPI'
 //Recipe
@@ -12,6 +10,7 @@ import Recipe from './Recipe'
 //Redux
 import { setEditRecipeRedux } from '../../actions/UserActions'
 import { setRecipesRedux } from '../../actions/UserActions'
+import { logout } from '../../actions/UserActions'
 
 class Dashboard extends Component {
 
@@ -29,12 +28,12 @@ class Dashboard extends Component {
 
     MyAPI.fetchApi(param, 'logout')
     .then((results) => {
-      localStorage.removeItem(LOCAL_STRAGE_KEY);
+      this.props.mapDispatchToLogout()
       this.props.history.push("/")
     })
     .catch((err) => {
-      //console.log("err: ", err)
-      localStorage.removeItem(LOCAL_STRAGE_KEY);
+      console.log("err: ", err)
+      this.props.mapDispatchToLogout()
       this.props.history.push("/")
     })
   }
@@ -66,7 +65,6 @@ class Dashboard extends Component {
     })
     .catch((err) => {
       console.log("err:", err)
-      localStorage.removeItem(LOCAL_STRAGE_KEY);
     })
   }
 
@@ -125,7 +123,8 @@ function mapStateToProps ( {user, recipes} ) {
 function mapDispatchToProps (dispatch) {
   return {
     mapDispatchToEditRecipes: (data) => dispatch(setEditRecipeRedux({ params: data})),
-    mapDispatchToSetRecipes: (data) => dispatch(setRecipesRedux({ params: data}))
+    mapDispatchToSetRecipes: (data) => dispatch(setRecipesRedux({ params: data})),
+    mapDispatchToLogout: () => dispatch(logout({ params: {}}))
   }
 }
 

@@ -1,5 +1,6 @@
 import {
   LOGIN_WITH_EMAIL,
+  LOGOUT
 } from '../actions/UserActions'
 
 function user (state = {}, action) {
@@ -15,6 +16,9 @@ function user (state = {}, action) {
         login_token: login_token,
         user: user,
       }
+
+    case LOGOUT : 
+      return {}
 
     default :
       return state

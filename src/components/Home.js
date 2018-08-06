@@ -4,7 +4,6 @@ import { connect } from 'react-redux'
 
 // API
 import * as MyAPI from '../utils/MyAPI'
-import { LOCAL_STRAGE_KEY } from '../utils/Settings'
 
 import { loginWithEmailRedux } from '../actions/UserActions'
 import { setRecipesRedux } from '../actions/UserActions'
@@ -12,16 +11,14 @@ import { setRecipesRedux } from '../actions/UserActions'
 class Home extends Component {
 
   componentDidMount() {
-    const storage_data = localStorage.getItem(LOCAL_STRAGE_KEY)
-    if (!storage_data) {
+    if (!this.props.user || !this.props.user.login_token) {
       this.props.history.push('login')
       return;
     }
 
-    const storage_json = JSON.parse(storage_data)
-    if ( storage_json && storage_json.login_token ) {
-      console.log("Sign in with token !")
-      this.signinWithTokenRequest(storage_json.login_token)
+    if ( this.props.user && this.props.user.login_token ) {
+      console.log("Sign in with token ! " + this.props.user.login_token)
+      this.signinWithTokenRequest(this.props.user.login_token)
     }
   }
 
@@ -45,7 +42,6 @@ signinWithTokenRequest = (login_token) => {
           user: data.user,
           login_token: data.login_token,
         }
-        localStorage.setItem(LOCAL_STRAGE_KEY, JSON.stringify(params))
         this.props.mapDispatchToLoginWithPassword(params)
         resolve()
       }
@@ -59,7 +55,7 @@ signinWithTokenRequest = (login_token) => {
   })
   .catch((err) => {
     console.log("err:", err)
-    localStorage.removeItem(LOCAL_STRAGE_KEY);
+    this.props.history.push("login")
   })
 }
 

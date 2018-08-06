@@ -1,5 +1,6 @@
 import {
   SET_EDIT_RECIPE,
+  LOGOUT
 } from '../actions/UserActions'
 
 function edit(state = {isEditing : false}, action) {
@@ -13,6 +14,9 @@ function edit(state = {isEditing : false}, action) {
         isEditing : action.params.isEditing, 
         recipeInfo: action.params.recipeInfo
       }
+      
+    case LOGOUT : 
+      return {}
 
     default :
       return state

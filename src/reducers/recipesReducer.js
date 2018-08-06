@@ -1,5 +1,6 @@
 import {
   SET_RECIPES,
+  LOGOUT
 } from '../actions/UserActions'
 
 function recipes (state = [], action) {
@@ -13,6 +14,9 @@ function recipes (state = [], action) {
       return [
         ...recipes
       ]
+
+    case LOGOUT : 
+      return {}
 
     default :
       return state

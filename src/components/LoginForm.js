@@ -10,7 +10,6 @@ import Alert from 'react-s-alert';
 
 // API
 import * as MyAPI from '../utils/MyAPI'
-import { LOCAL_STRAGE_KEY } from '../utils/Settings'
 
 import { loginWithEmailRedux } from '../actions/UserActions'
 import { setRecipesRedux } from '../actions/UserActions'
@@ -50,7 +49,6 @@ class LoginForm extends Component {
             login_token: data.login_token,
           }
 
-          localStorage.setItem(LOCAL_STRAGE_KEY, JSON.stringify(params))
           this.props.mapDispatchToLoginWithPassword(params)
 
           resolve()
