@@ -27,7 +27,7 @@ class RecipeForm extends Component {
       duration:''
     }
   }
-  
+
   constructor(props) {
     super(props)
     if (props.edit.isEditing === true) {
@@ -139,10 +139,12 @@ class RecipeForm extends Component {
     }
   }
 
+// Name callback
   onChangeName = (e, {value }) => {
     this.setState({name : value})
   }
 
+// Duration callback
   onChangeDuration = (e, { name, value }) => {
     const re = /^[1-9\b][0-9\b]*$/;
 
@@ -166,7 +168,8 @@ class RecipeForm extends Component {
       return
 
     this.setState((prevState) => ({
-      ingredients: [...prevState.ingredients, this.state.currentIngredient]
+      ingredients: [...prevState.ingredients, this.state.currentIngredient],
+      currentIngredient: ''
     }))
   }
 
@@ -216,7 +219,8 @@ class RecipeForm extends Component {
       return
 
     this.setState((prevState) => ({
-      steps: [...prevState.steps, this.state.currentStep]
+      steps: [...prevState.steps, this.state.currentStep],
+      currentStep: ''
     }))
   }
 
@@ -335,6 +339,7 @@ class RecipeForm extends Component {
                 style={{width: '100%'}}
                 icon={{className: 'plus link icon', onClick: this.onAddIngredient}}
                 iconPosition='left'
+                value={this.state.currentIngredient}
                 onChange={this.onIngredientChange}/>
             </Grid.Column>
 
@@ -351,6 +356,7 @@ class RecipeForm extends Component {
                 style={{width: '100%'}}
                 icon={{className: 'plus link icon', onClick: this.onAddStep}}
                 iconPosition='left'
+                value={this.state.currentStep}
                 onChange={this.onStepChange}/>
             </Grid.Column>
 
