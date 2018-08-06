@@ -10,7 +10,7 @@ import Recipe from './Recipe'
 //Redux
 import { setEditRecipeRedux } from '../../actions/UserActions'
 import { setRecipesRedux } from '../../actions/UserActions'
-import { logout } from '../../actions/UserActions'
+import { logoutRedux } from '../../actions/UserActions'
 
 class Dashboard extends Component {
 
@@ -18,22 +18,13 @@ class Dashboard extends Component {
     this.props.mapDispatchToEditRecipes({isEditing : false, recipeInfo : {}})
   }
 
-  logoutRequest = () => {
-
-    const { user } = this.props
-
-    const param = {
-      login_token: user.login_token
-    }
-
-    MyAPI.fetchApi(param, 'logout')
-    .then((results) => {
-      this.props.mapDispatchToLogout()
+  onLogout = () => {
+    MyAPI.logout()
+    .then(() => {
       this.props.history.push("/")
     })
     .catch((err) => {
       console.log("err: ", err)
-      this.props.mapDispatchToLogout()
       this.props.history.push("/")
     })
   }
@@ -84,7 +75,7 @@ class Dashboard extends Component {
         <div style={{marginTop:60}}>
           <a style={{cursor: 'pointer'}} onClick={() => this.newRecipeRequest()}>New recipe</a>
           <div style={{float: 'right'}}>
-            <a style={{cursor: 'pointer'}} onClick={() => this.logoutRequest()}>Logout</a>
+            <a style={{cursor: 'pointer'}} onClick={() => this.onLogout()}>Logout</a>
           </div>
         </div>
 
@@ -124,7 +115,7 @@ function mapDispatchToProps (dispatch) {
   return {
     mapDispatchToEditRecipes: (data) => dispatch(setEditRecipeRedux({ params: data})),
     mapDispatchToSetRecipes: (data) => dispatch(setRecipesRedux({ params: data})),
-    mapDispatchToLogout: () => dispatch(logout({ params: {}}))
+    mapDispatchToLogout: () => dispatch(logoutRedux({ params: {}}))
   }
 }
 

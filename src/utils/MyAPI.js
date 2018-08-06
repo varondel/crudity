@@ -1,5 +1,6 @@
 import store from './../store'
 import { setRecipesRedux } from './../actions/UserActions'
+import { logoutRedux } from './../actions/UserActions'
 
 // you can change the port number at server/index.js
 const api = "http://localhost:4002"
@@ -32,6 +33,21 @@ export const fetchRecipes = () =>
     fetchApi(param, 'fetch_recipes')
     .then((result) => {
       store.dispatch(setRecipesRedux({ params: result.recipes}))
+      resolve()
+    })
+  })
+
+export const logout = () => 
+  new Promise((resolve, reject) => {
+    const { user } = store.getState()
+
+    const param = {
+      login_token: user.login_token
+    }
+
+    fetchApi(param, 'logout')
+    .then((results) => {
+      store.dispatch(logoutRedux(param))
       resolve()
     })
   })

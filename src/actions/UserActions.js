@@ -27,7 +27,7 @@ export function setEditRecipeRedux ({params}) {
   }
 }
 
-export function logout (params) {
+export function logoutRedux (params) {
 
   return {
     type: LOGOUT,
