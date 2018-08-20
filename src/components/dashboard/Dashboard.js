@@ -71,35 +71,41 @@ class Dashboard extends Component {
     const recipes = this.props.recipesState
     
     return(
-      <Container textAlign='left'>
-
-        <div style={{marginTop:60}}>
-          <a style={{cursor: 'pointer'}} onClick={() => this.onCreateRecipe()}>New recipe</a>
-          <div style={{float: 'right'}}>
-            <a style={{cursor: 'pointer'}} onClick={() => this.onLogout()}>Logout</a>
+      <div className='main'>
+        <Container>
+          <div style={{marginTop:60}}>
+            <a style={{cursor: 'pointer'}} onClick={() => this.onCreateRecipe()}>New recipe</a>
+            <div style={{float: 'right'}}>
+              <a style={{cursor: 'pointer'}} onClick={() => this.onLogout()}>Logout</a>
+            </div>
           </div>
-        </div>
 
-        <div>
-          {
-            recipes.length > 0 &&
-            recipes.map((value, key) => 
-              (<Popup key={key} trigger={
-                <Recipe key={key} data={value}/>
-              } flowing hoverable>
-                <Grid centered divided columns={2}>
-                  <Grid.Column textAlign='center'>
-                    <Button onClick={() => this.onEditRecipe(value)} color='blue'>Edit</Button>
-                  </Grid.Column>
-                  <Grid.Column textAlign='center'>
-                    <Button onClick={() => this.onDeleteRecipe(key)} color='blue'>Delete</Button>
-                  </Grid.Column>
-                </Grid>
-              </Popup>)
-            )
-          }
-        </div>
-      </Container>
+          <div>
+            {
+              recipes.length > 0 &&
+              recipes.map((value, key) => 
+                (<Popup 
+                  key={key} 
+                  trigger={
+                    <Recipe key={key} data={value}/>
+                  } 
+                  flowing 
+                  hoverable
+                >
+                  <Grid centered divided columns={2}>
+                    <Grid.Column textAlign='center'>
+                      <Button onClick={() => this.onEditRecipe(value)} color='blue'>Edit</Button>
+                    </Grid.Column>
+                    <Grid.Column textAlign='center'>
+                      <Button onClick={() => this.onDeleteRecipe(key)} color='blue'>Delete</Button>
+                    </Grid.Column>
+                  </Grid>
+                </Popup>)
+              )
+            }
+          </div>
+        </Container>
+      </div>
     )
   }
 }

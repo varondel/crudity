@@ -100,6 +100,7 @@ class LoginForm extends Component {
             <Grid.Column textAlign='left' width={16}>
               <label>Password</label>
               <Input
+                type='password'
                 style={{width: '100%'}}
                 icon='key'
                 iconPosition='left'

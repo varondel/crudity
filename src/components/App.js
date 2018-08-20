@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import '../App.css';
 
 import { Route, Switch } from 'react-router-dom'
+import Menu from './Menu'
+import MenuHeader from './Header'
 import Dashboard from './dashboard//Dashboard'
 import Login from './Login'
 import Home from './Home'
@@ -16,6 +18,9 @@ import 'react-s-alert/dist/s-alert-css-effects/slide.css';
 
 // redux
 import { connect } from 'react-redux'
+
+// css
+import './../styles/layout.css'
 
 import { withRouter } from 'react-router';
 
@@ -46,7 +51,13 @@ class App extends Component {
           )} />}
 
           <Route exact path='/dashboard' render={() => (
-            <Dashboard />
+            <React.Fragment>
+              <MenuHeader/>
+              <div style={{display: 'flex'}}>
+                <Menu/>
+                <Dashboard/>
+              </div>
+            </React.Fragment>
           )} />
 
 
