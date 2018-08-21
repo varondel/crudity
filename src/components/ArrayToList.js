@@ -8,15 +8,17 @@ class ArrayToList extends Component {
 
   render() {
     return(
-      <List verticalAlign='middle'>
+      <List divided={this.props.isEditing} verticalAlign='middle'>
         {
           this.props.array.map((value, key) => 
-            <List.Item key={key}>
+            <List.Item key={key} className={this.props.isEditing ? 'itemListHover' : ''} style={{display: 'flex', alignItems: 'center'}}>
+              <Icon name='right triangle' color='grey' />
+              <List.Content style={{flex:'1'}}>{value}</List.Content>
               {this.props.isEditing &&
               <span>
                  <List.Content floated='right'>
                   <Button 
-                  style={{marginTop:'10px'}}
+                    style={{marginTop:'10px'}}
                     type = 'button'
                     onClick = {() => {this.props.onDelete(key)}} 
                     icon>
@@ -40,8 +42,6 @@ class ArrayToList extends Component {
                 </List.Content>
               </span>
               }
-              <Icon name='right triangle' color='grey' />
-              <List.Content>{value}</List.Content>
             </List.Item>
           )
         }
