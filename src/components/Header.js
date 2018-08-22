@@ -36,7 +36,7 @@ class MenuHeader extends Component {
           <Menu.Item>
             <Input width='250px' className='icon' icon='search' placeholder='Search...' />
           </Menu.Item>
-          <Icon name='power' onClick={() => this.onLogout()}/>
+          <Icon style={{cursor: 'pointer'}} name='power' onClick={() => this.onLogout()}/>
         </Menu.Item> 
       </Menu>
       </div>

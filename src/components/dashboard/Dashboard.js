@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { withRouter } from 'react-router'
 import { connect } from 'react-redux'
-import { Container, Button, Grid, Popup} from 'semantic-ui-react'
+import { Container } from 'semantic-ui-react'
 
 // API
 import * as MyAPI from '../../utils/MyAPI'
@@ -29,38 +29,6 @@ class Dashboard extends Component {
     })
   }
 
-  onEditRecipe = (recipe) => {
-    const edit = {
-      isUdating: true,
-      isEditing: true,
-      recipeInfo: recipe
-    }
-    this.props.mapDispatchToEditRecipes(edit)
-    this.props.history.push("recipe_form")
-  }
-
-  onDeleteRecipe = (key) => {
-
-    const params = {
-      userCredit : this.props.user,
-      _id: this.props.recipesState[key]._id,
-    }
-
-    MyAPI.fetchApi(params, 'delete_recipe')
-    .then((res) => {
-      if (res.status === "success"){
-        MyAPI.fetchRecipes()
-      }
-      else {
-        // Manage error page
-      }
-    })
-    .catch((err) => {
-      console.log("err:", err)
-    })
-  }
-
-
   onCreateRecipe = () => {
     this.props.mapDispatchToEditRecipes({isEditing: true, isUpdating: false, recipeInfo : {}})
     this.props.history.push('recipe_form')
@@ -84,23 +52,7 @@ class Dashboard extends Component {
             {
               recipes.length > 0 &&
               recipes.map((value, key) => 
-                (<Popup 
-                  key={key} 
-                  trigger={
-                    <Recipe key={key} data={value}/>
-                  } 
-                  flowing 
-                  hoverable
-                >
-                  <Grid centered divided columns={2}>
-                    <Grid.Column textAlign='center'>
-                      <Button onClick={() => this.onEditRecipe(value)} color='blue'>Edit</Button>
-                    </Grid.Column>
-                    <Grid.Column textAlign='center'>
-                      <Button onClick={() => this.onDeleteRecipe(key)} color='blue'>Delete</Button>
-                    </Grid.Column>
-                  </Grid>
-                </Popup>)
+                ( <Recipe key={key} id={key} data={value}/> )
               )
             }
           </div>
@@ -111,9 +63,8 @@ class Dashboard extends Component {
 }
 
 // react-redux
-function mapStateToProps ( {user, recipes} ) {
+function mapStateToProps ( {recipes} ) {
   return {
-    user,
     recipesState : recipes
   }
 }
